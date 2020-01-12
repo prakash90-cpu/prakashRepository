@@ -73,7 +73,7 @@ public class MT940 extends HttpServlet
 	File subDirName = null;
 	Logger logger = null;
 	
-	// PrintWriter out =null;
+	
 
 	public List<File> uploadedFileList = new ArrayList<File>();
 
@@ -260,11 +260,7 @@ public class MT940 extends HttpServlet
 		            BigDecimal BD = new BigDecimal(doublevalue.toString());
 		            Long Longval = BD.longValue();
 		            account = Long.toString(Longval).trim();
-		            /*
-		            Statement_Date = sheet.getRow(Integer.parseInt(CONFIG_PROP.getProperty("Statement_Row"))).getCell(Integer.parseInt(CONFIG_PROP.getProperty("Statement_Column")));//yub
-					temp2 = Statement_Date.getStringCellValue();//yub
-				
-				*/
+		          
 			}
 			else if( BANK_NAME.equalsIgnoreCase("DENA")){
 				String doublevalue = sheet.getRow(Integer.parseInt(CONFIG_PROP.getProperty("account_Row"))).getCell(Integer.parseInt(CONFIG_PROP.getProperty("account_Column"))).getStringCellValue();
@@ -272,9 +268,7 @@ public class MT940 extends HttpServlet
 	            Long Longval = BD.longValue();
 	            account = Long.toString(Longval).trim();
 				
-	            /*Statement_Date = sheet.getRow(Integer.parseInt(CONFIG_PROP.getProperty("Statement_Row"))).getCell(Integer.parseInt(CONFIG_PROP.getProperty("Statement_Column")));//yub
-				temp2 = Statement_Date.getStringCellValue();//yub 
-				*/
+	           
 				
 			}
 			
