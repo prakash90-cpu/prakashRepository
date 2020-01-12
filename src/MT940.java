@@ -453,8 +453,7 @@ public class MT940 extends HttpServlet
 
 			if (CONFIG_PROP.getProperty("EMPTY_ROW_AFTER_TRANS_HEADER").equalsIgnoreCase("TRUE"))
 			{
-				// logger.info("EMPTY_ROW_AFTER_TRANS_HEADER-TRUE"+(cellIndex_60F_DATE[0]+2)+","+cellIndex_60F_DATE[1]);
-				// logger.info("EMPTY_ROW_AFTER_TRANS_HEADER-TRUE"+cellIndex_60F[0]+1+","+cellIndex_60F[1]);
+				
 				
 				
 				OPENING_BALANCE_DATE_CELL = sheet.getRow(cellIndex_60F_DATE[0] + 2).getCell(cellIndex_60F_DATE[1]);
@@ -2194,7 +2193,7 @@ public class MT940 extends HttpServlet
 	}
 	
 	
-	
+	//Prakash added
 
 
 }
