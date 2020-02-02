@@ -26,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -34,6 +35,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -103,7 +105,7 @@ public class MT940 extends HttpServlet
 					
 				//	System.out.println(Cell.CELL_TYPE_STRING);
 
-					if (rowCell.getCellType() == Cell.CELL_TYPE_STRING)
+					if (rowCell.getCellType() == CellType.STRING)
 					{
 
 						if (rowCell.getStringCellValue().contains(CONFIG_PROP.getProperty(propertyName)))
@@ -150,7 +152,7 @@ public class MT940 extends HttpServlet
 
 					Cell rowCell = cell.next();
 
-					if (rowCell.getCellType() == Cell.CELL_TYPE_STRING)
+					if (rowCell.getCellType() == CellType.STRING)
 					{
 
 						if (rowCell.getStringCellValue().contains(CONFIG_PROP.getProperty(propertyName)))
@@ -516,13 +518,13 @@ public class MT940 extends HttpServlet
 			switch (OPENING_BALANCE_DATE_CELL.getCellType())
 			{
 
-				case Cell.CELL_TYPE_NUMERIC:
+				case NUMERIC:
 					
 				
 					MT940_CONTENT += OPENING_BALANCE_DATE_FORMAT.format(OPENING_BALANCE_DATE_CELL.getDateCellValue()) + "INR";
 					break;
 
-				case Cell.CELL_TYPE_STRING:
+				case STRING:
 					if(BANK_NAME.equalsIgnoreCase("VIJAYA") ){
 						 DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 					    Date date = (Date) formatter.parse(OPENING_BALANCE_DATE_CELL.getStringCellValue());
@@ -570,11 +572,11 @@ public class MT940 extends HttpServlet
 				switch (OPENING_BALANCE_CELL.getCellType())
 				{
 
-					case Cell.CELL_TYPE_NUMERIC:
+					case NUMERIC:
 						getCR_DR_Amount(OPEN_BALANCE_ROW_NUMBER, sheet, OPENING_BALANCE_CELL.getNumericCellValue());
 						break;
 
-					case Cell.CELL_TYPE_STRING:
+					case STRING:
 						if(BANK_NAME.equalsIgnoreCase("VIJAYA")){
 						String amount=OPENING_BALANCE_CELL.getStringCellValue().replaceAll(",", "").replace(" Cr", "").replace(" Dr", "").replaceAll("\\s", "").trim();
 						
@@ -612,14 +614,14 @@ public class MT940 extends HttpServlet
 
 				switch (OPENING_BALANCE_CELL.getCellType())
 				{
-					case Cell.CELL_TYPE_NUMERIC:
+					case NUMERIC:
 						if (DATACELL.equalsIgnoreCase("SAMECELL"))
 							MT940_CONTENT += new BigDecimal(String.valueOf(OPENING_BALANCE_CELL.getNumericCellValue()).split(CONFIG_PROP.getProperty("DATA_SEPERATOR"))[1].trim()).setScale(2, BigDecimal.ROUND_HALF_EVEN) + System.getProperty("line.separator");
 						else
 							MT940_CONTENT += new BigDecimal(String.valueOf(OPENING_BALANCE_CELL.getNumericCellValue()).trim()).setScale(2, BigDecimal.ROUND_HALF_EVEN) + System.getProperty("line.separator");
 						break;
 
-					case Cell.CELL_TYPE_STRING:
+					case STRING:
 						if (DATACELL.equalsIgnoreCase("SAMECELL"))
 							MT940_CONTENT += String.valueOf(new BigDecimal(OPENING_BALANCE_CELL.getStringCellValue().split(CONFIG_PROP.getProperty("DATA_SEPERATOR"))[1].trim().replaceAll(",", "")).setScale(2, BigDecimal.ROUND_HALF_EVEN)).replaceAll(".", ",") + System.getProperty("line.separator");
 						else
@@ -696,7 +698,7 @@ public class MT940 extends HttpServlet
 					// logger.info("row,col:       "+cellIndex_60F_DATE[0]+","+cellIndex_60F_DATE[1]);
 					// logger.info("row number       "+i);
 
-					Cell NEXT_ROW_CELL = sheet.getRow(i).getCell(cellIndex_60F_DATE[1], Row.RETURN_BLANK_AS_NULL);
+					Cell NEXT_ROW_CELL = sheet.getRow(i).getCell(cellIndex_60F_DATE[1], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
 					String NEXT_ROW_CELL_CONTENT = new String();
 					
@@ -707,13 +709,13 @@ public class MT940 extends HttpServlet
 					
 					if ("INDUSIND BANK".equalsIgnoreCase(BANK_NAME)&& NEXT_ROW_CELL == null)
 					{
-						NEXT_ROW_CELL = sheet.getRow(++i).getCell(cellIndex_60F_DATE[1], Row.RETURN_BLANK_AS_NULL);
+						NEXT_ROW_CELL = sheet.getRow(++i).getCell(cellIndex_60F_DATE[1], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 						temp2 = temp2.split("To")[1];
 					}
 					
 					/*else if ("INDIAN BANK".equalsIgnoreCase(BANK_NAME)&& NEXT_ROW_CELL == null )
 					{
-						NEXT_ROW_CELL = sheet.getRow(++i).getCell(cellIndex_60F_DATE[1], Row.RETURN_BLANK_AS_NULL);
+						NEXT_ROW_CELL = sheet.getRow(++i).getCell(cellIndex_60F_DATE[1], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 						
 					}
 					
@@ -721,13 +723,13 @@ public class MT940 extends HttpServlet
 						
 						switch (NEXT_ROW_CELL.getCellType())
 						{
-							case Cell.CELL_TYPE_NUMERIC:
+							case NUMERIC:
 								break;
 
 							case Cell.CELL_TYPE_STRING:
-								NEXT_ROW_CELL = sheet.getRow(++i).getCell(cellIndex_60F_DATE[1], Row.RETURN_BLANK_AS_NULL);
+								NEXT_ROW_CELL = sheet.getRow(++i).getCell(cellIndex_60F_DATE[1], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 								while(NEXT_ROW_CELL==null){
-									NEXT_ROW_CELL = sheet.getRow(++i).getCell(cellIndex_60F_DATE[1], Row.RETURN_BLANK_AS_NULL);
+									NEXT_ROW_CELL = sheet.getRow(++i).getCell(cellIndex_60F_DATE[1], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 									
 								}
 								break;
@@ -740,14 +742,14 @@ public class MT940 extends HttpServlet
 					
 					else if ("CORPORATION".equalsIgnoreCase(BANK_NAME))
 					{
-						Cell NEXT_ROW_CELL_CORP = sheet.getRow(i + 1).getCell(cellIndex_60F_DATE[1], Row.RETURN_BLANK_AS_NULL);
+						Cell NEXT_ROW_CELL_CORP = sheet.getRow(i + 1).getCell(cellIndex_60F_DATE[1], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 						String NEXT_ROW_CELL_CONTENT_CORP = "";
 						switch (NEXT_ROW_CELL_CORP.getCellType())
 						{
-							case Cell.CELL_TYPE_NUMERIC:
+							case NUMERIC:
 								break;
 
-							case Cell.CELL_TYPE_STRING:
+							case STRING:
 								NEXT_ROW_CELL_CONTENT_CORP = NEXT_ROW_CELL_CORP.getStringCellValue();
 								break;
 
@@ -762,10 +764,10 @@ public class MT940 extends HttpServlet
 
 					switch (NEXT_ROW_CELL.getCellType())
 					{
-						case Cell.CELL_TYPE_NUMERIC:
+						case NUMERIC:
 							break;
 
-						case Cell.CELL_TYPE_STRING:
+						case STRING:
 							NEXT_ROW_CELL_CONTENT = NEXT_ROW_CELL.getStringCellValue();
 							break;
 
@@ -779,26 +781,26 @@ public class MT940 extends HttpServlet
 					if (NEXT_ROW_CELL != null)
 					{
 
-						VALUE_DATE_CELL = sheet.getRow(i).getCell(VALUE_DATE_INDEX, Row.RETURN_BLANK_AS_NULL);
-						TRANS_DATE_CELL = sheet.getRow(i).getCell(TRANS_DATE_INDEX, Row.RETURN_BLANK_AS_NULL);
-						CHEQUE_NUMBER_CELL = sheet.getRow(i).getCell(CHEQUE_NUMBER, Row.RETURN_BLANK_AS_NULL);
-						DEBIT_BALANCE_CELL = sheet.getRow(i).getCell(DEBIT_BALANCE, Row.RETURN_BLANK_AS_NULL);
-						CREDIT_BALANCE_CELL = sheet.getRow(i).getCell(CREDIT_BALANCE, Row.RETURN_BLANK_AS_NULL);
-						// CR_DR_INDICATOR_CELL=sheet.getRow(i).getCell(CR_DR_INDICATOR,Row.RETURN_BLANK_AS_NULL);
-						DESCRIPTION_CELL = sheet.getRow(i).getCell(DESCRIPTION, Row.RETURN_BLANK_AS_NULL);
-						CLOSING_BALANCE_CELL = sheet.getRow(i).getCell(CLOSING_BALANCE_INDEX, Row.RETURN_BLANK_AS_NULL);
-						TRANS_REF_CELL = sheet.getRow(i).getCell(TRANS_REF_INDEX, Row.RETURN_BLANK_AS_NULL);
+						VALUE_DATE_CELL = sheet.getRow(i).getCell(VALUE_DATE_INDEX, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+						TRANS_DATE_CELL = sheet.getRow(i).getCell(TRANS_DATE_INDEX, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+						CHEQUE_NUMBER_CELL = sheet.getRow(i).getCell(CHEQUE_NUMBER, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+						DEBIT_BALANCE_CELL = sheet.getRow(i).getCell(DEBIT_BALANCE, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+						CREDIT_BALANCE_CELL = sheet.getRow(i).getCell(CREDIT_BALANCE, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+						// CR_DR_INDICATOR_CELL=sheet.getRow(i).getCell(CR_DR_INDICATOR,Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+						DESCRIPTION_CELL = sheet.getRow(i).getCell(DESCRIPTION, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+						CLOSING_BALANCE_CELL = sheet.getRow(i).getCell(CLOSING_BALANCE_INDEX, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+						TRANS_REF_CELL = sheet.getRow(i).getCell(TRANS_REF_INDEX, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
 						switch (VALUE_DATE_CELL.getCellType())
 						{
 
-							case Cell.CELL_TYPE_NUMERIC:
+							case NUMERIC:
 								CLOSING_DATE = VALUE_DATE_FORMAT.format(VALUE_DATE_CELL.getDateCellValue());
 								if(CREDIT_BALANCE_CELL!=null || DEBIT_BALANCE_CELL!=null)
 								MT940_CONTENT += ":61:" + VALUE_DATE_FORMAT.format(VALUE_DATE_CELL.getDateCellValue());
 								break;
 
-							case Cell.CELL_TYPE_STRING:
+							case STRING:
 								if(BANK_NAME.equalsIgnoreCase("VIJAYA")){
 									 DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 								    Date date = (Date) formatter.parse(VALUE_DATE_CELL.getStringCellValue());
@@ -842,12 +844,12 @@ public class MT940 extends HttpServlet
 						switch (TRANS_DATE_CELL.getCellType())
 						{
 
-							case Cell.CELL_TYPE_NUMERIC:
+							case NUMERIC:
 								if(CREDIT_BALANCE_CELL!=null || DEBIT_BALANCE_CELL!=null)
 								MT940_CONTENT += TRANS_DATE_FORMAT.format(TRANS_DATE_CELL.getDateCellValue());
 								break;
 
-							case Cell.CELL_TYPE_STRING:
+							case STRING:
 								if(BANK_NAME.equalsIgnoreCase("VIJAYA")){
 									 DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 								    Date date = (Date) formatter.parse(TRANS_DATE_CELL.getStringCellValue());
@@ -882,7 +884,7 @@ public class MT940 extends HttpServlet
 						if (CONFIG_PROP.getProperty("CR_DR_ON_SAME_COL").equalsIgnoreCase("TRUE"))
 						{
 							CR_DR_INDICATOR = Integer.parseInt(CONFIG_PROP.getProperty("CR_DR_INDICATOR"));
-							CR_DR_INDICATOR_CELL = sheet.getRow(i).getCell(CR_DR_INDICATOR, Row.RETURN_BLANK_AS_NULL);
+							CR_DR_INDICATOR_CELL = sheet.getRow(i).getCell(CR_DR_INDICATOR, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 							String statement = CR_DR_INDICATOR_CELL.getStringCellValue().trim();
 
 							if (statement.equalsIgnoreCase("CR") || statement.equalsIgnoreCase("C") || statement.equalsIgnoreCase("Cr."))
@@ -904,7 +906,7 @@ public class MT940 extends HttpServlet
 							{
 								switch (DEBIT_BALANCE_CELL.getCellType())
 								{
-									case Cell.CELL_TYPE_NUMERIC:
+									case NUMERIC:
 
 										if (DEBIT_BALANCE_CELL.getNumericCellValue() != 0)
 										{
@@ -913,7 +915,7 @@ public class MT940 extends HttpServlet
 										}
 										break;
 
-									case Cell.CELL_TYPE_STRING:
+									case STRING:
 										if (!DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" ") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("0") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("            ") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" - ") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-  "))
 										{
 
@@ -929,7 +931,7 @@ public class MT940 extends HttpServlet
 							{
 								switch (CREDIT_BALANCE_CELL.getCellType())
 								{
-									case Cell.CELL_TYPE_NUMERIC:
+									case NUMERIC:
 										if (CREDIT_BALANCE_CELL.getNumericCellValue() != 0)
 										{
 											CREDIT_DEBIT_MARK = "C";
@@ -938,7 +940,7 @@ public class MT940 extends HttpServlet
 
 										break;
 
-									case Cell.CELL_TYPE_STRING:
+									case STRING:
 										if (!CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" ")&& !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("0") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("            ") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" - ") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-  "))
 										{
 											CREDIT_DEBIT_MARK = "C";
@@ -958,14 +960,14 @@ public class MT940 extends HttpServlet
 
 							switch (CREDIT_BALANCE_CELL.getCellType())
 							{
-								case Cell.CELL_TYPE_NUMERIC:
+								case NUMERIC:
 									if (CREDIT_BALANCE_CELL.getNumericCellValue() != 0)
 									{
 										MT940_CONTENT += String.valueOf(new BigDecimal(CREDIT_BALANCE_CELL.getNumericCellValue()).setScale(2, BigDecimal.ROUND_HALF_EVEN)).replace(".", ",") + TRANSACTION_TYPE;
 									}
 									break;
 
-								case Cell.CELL_TYPE_STRING:
+								case STRING:
 
 									if (!CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("0") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("            ") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" - ") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-  "))
 									{
@@ -981,14 +983,14 @@ public class MT940 extends HttpServlet
 						{
 							switch (DEBIT_BALANCE_CELL.getCellType())
 							{
-								case Cell.CELL_TYPE_NUMERIC:
+								case NUMERIC:
 									if (DEBIT_BALANCE_CELL.getNumericCellValue() != 0)
 									{
 										MT940_CONTENT += String.valueOf(new BigDecimal(DEBIT_BALANCE_CELL.getNumericCellValue()).setScale(2, BigDecimal.ROUND_HALF_EVEN)).replace(".", ",") + TRANSACTION_TYPE;
 									}
 									break;
 
-								case Cell.CELL_TYPE_STRING:
+								case STRING:
 									if (!DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" ") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("0") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("            ") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" - ") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-  "))
 									{ // logger.info("@"+DEBIT_BALANCE_CELL.getStringCellValue().replace(" ","")+"@"+DEBIT_BALANCE_CELL.getStringCellValue().length());
 										MT940_CONTENT += String.valueOf(new BigDecimal(DEBIT_BALANCE_CELL.getStringCellValue().replaceAll(",", "").replace(" ", "").replace(String.valueOf((char) 160), " ").trim()).setScale(2, BigDecimal.ROUND_HALF_EVEN)).replace(".", ",") + TRANSACTION_TYPE;
@@ -1009,11 +1011,11 @@ public class MT940 extends HttpServlet
 							{
 								switch (CHEQUE_NUMBER_CELL.getCellType())
 								{
-									case Cell.CELL_TYPE_NUMERIC:
+									case NUMERIC:
 										chequeNoCell = String.valueOf(Double.valueOf(CHEQUE_NUMBER_CELL.getNumericCellValue()).intValue());
 										break;
 
-									case Cell.CELL_TYPE_STRING:
+									case STRING:
 										chequeNoCell = CHEQUE_NUMBER_CELL.getStringCellValue();
 										break;
 								}
@@ -1029,10 +1031,10 @@ public class MT940 extends HttpServlet
 								{
 									switch (DESCRIPTION_CELL.getCellType())
 									{
-										case Cell.CELL_TYPE_NUMERIC:
+										case NUMERIC:
 
 											break;
-										case Cell.CELL_TYPE_STRING:
+										case STRING:
 											if (description.trim().startsWith("BY TRANSFER-NEFT"))
 											{
 												descArr = description.split("\\*");
@@ -1539,11 +1541,11 @@ public class MT940 extends HttpServlet
 						{
 							switch (DESCRIPTION_CELL.getCellType())
 							{
-								case Cell.CELL_TYPE_NUMERIC:
+								case NUMERIC:
 									MT940_CONTENT += ":86:" + DESCRIPTION_CELL.getNumericCellValue() + System.getProperty("line.separator");
 									break;
 
-								case Cell.CELL_TYPE_STRING:
+								case STRING:
 									String temp86 = DESCRIPTION_CELL.getStringCellValue().replaceAll("0000000000000000000000000000", "").replaceAll(" +", " ");
 
 									/* Replacing service tax with ST */
@@ -1579,11 +1581,11 @@ public class MT940 extends HttpServlet
 						{
 							switch (CLOSING_BALANCE_CELL.getCellType())
 							{
-								case Cell.CELL_TYPE_NUMERIC:
+								case NUMERIC:
 									CLOSING_BALANCE = String.valueOf(new BigDecimal(CLOSING_BALANCE_CELL.getNumericCellValue()).setScale(2, BigDecimal.ROUND_HALF_EVEN)).replace(".", ",");
 									break;
 
-								case Cell.CELL_TYPE_STRING:
+								case STRING:
 									if(BANK_NAME.equalsIgnoreCase("VIJAYA")){
 										String balance=CLOSING_BALANCE_CELL.getStringCellValue().replaceAll(",", "").replace(" Cr", "").replace(" Dr", "");
 										balance=balance.substring(0, balance.length()-1);
@@ -1631,7 +1633,7 @@ public class MT940 extends HttpServlet
 
 				switch (CLOSING_BAL_CELL.getCellType())
 				{
-					case Cell.CELL_TYPE_NUMERIC:
+					case NUMERIC:
 						// MT940_CONTENT+=new
 						// BigDecimal(OPENING_BALANCE_CELL.getNumericCellValue()).setScale(2,BigDecimal.ROUND_HALF_EVEN)+System.getProperty("line.separator");
 						if (DATACELL.equalsIgnoreCase("SAMECELL"))
@@ -1640,7 +1642,7 @@ public class MT940 extends HttpServlet
 							MT940_CONTENT += String.valueOf(new BigDecimal(String.valueOf(CLOSING_BAL_CELL.getNumericCellValue()).trim().replace(",", "")).setScale(2, BigDecimal.ROUND_HALF_EVEN)).replace(".", ",") + System.getProperty("line.separator");
 						break;
 
-					case Cell.CELL_TYPE_STRING:
+					case STRING:
 						if (DATACELL.equalsIgnoreCase("SAMECELL"))
 							MT940_CONTENT += String.valueOf(new BigDecimal(CLOSING_BAL_CELL.getStringCellValue().split(CONFIG_PROP.getProperty("DATA_SEPERATOR"))[1].trim().replace(",", "")).setScale(2, BigDecimal.ROUND_HALF_EVEN)).replace(".", ",") + System.getProperty("line.separator");
 						else
@@ -1744,8 +1746,8 @@ public class MT940 extends HttpServlet
 		
 		
 			
-		 DEBIT_BALANCE_CELL = sheet.getRow(OPEN_BALANCE_ROW_NUMBER).getCell(Integer.parseInt(CONFIG_PROP.getProperty("DEBIT")), Row.RETURN_BLANK_AS_NULL);
-		 CREDIT_BALANCE_CELL = sheet.getRow(OPEN_BALANCE_ROW_NUMBER).getCell(Integer.parseInt(CONFIG_PROP.getProperty("CREDIT")), Row.CREATE_NULL_AS_BLANK);
+		 DEBIT_BALANCE_CELL = sheet.getRow(OPEN_BALANCE_ROW_NUMBER).getCell(Integer.parseInt(CONFIG_PROP.getProperty("DEBIT")), Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+		 CREDIT_BALANCE_CELL = sheet.getRow(OPEN_BALANCE_ROW_NUMBER).getCell(Integer.parseInt(CONFIG_PROP.getProperty("CREDIT")), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
 		
 		
 		String CREDIT_DEBIT_MARK = new String();
@@ -1754,7 +1756,7 @@ public class MT940 extends HttpServlet
 		if (CONFIG_PROP.getProperty("CR_DR_ON_SAME_COL").equalsIgnoreCase("TRUE"))
 		{
 			CR_DR_INDICATOR = Integer.parseInt(CONFIG_PROP.getProperty("CR_DR_INDICATOR"));
-			CR_DR_INDICATOR_CELL = sheet.getRow(OPEN_BALANCE_ROW_NUMBER).getCell(CR_DR_INDICATOR, Row.RETURN_BLANK_AS_NULL);
+			CR_DR_INDICATOR_CELL = sheet.getRow(OPEN_BALANCE_ROW_NUMBER).getCell(CR_DR_INDICATOR, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
 			String CRDR = CR_DR_INDICATOR_CELL.getStringCellValue().trim();
 			// if(CR_DR_INDICATOR_CELL.getStringCellValue().trim().equalsIgnoreCase("CR"))
@@ -1777,7 +1779,7 @@ public class MT940 extends HttpServlet
 			{
 				switch (DEBIT_BALANCE_CELL.getCellType())
 				{
-					case Cell.CELL_TYPE_NUMERIC:
+					case NUMERIC:
 
 						if (DEBIT_BALANCE_CELL.getNumericCellValue() != 0)
 						{
@@ -1786,7 +1788,7 @@ public class MT940 extends HttpServlet
 						}
 						break;
 
-					case Cell.CELL_TYPE_STRING:
+					case STRING:
 						if (!DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" ") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("0") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("            ") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" - ") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-  "))
 						{
 
@@ -1803,7 +1805,7 @@ public class MT940 extends HttpServlet
 			{
 				switch (CREDIT_BALANCE_CELL.getCellType())
 				{
-					case Cell.CELL_TYPE_NUMERIC:
+					case NUMERIC:
 						if (CREDIT_BALANCE_CELL.getNumericCellValue() != 0)
 						{
 							CREDIT_DEBIT_MARK = "C";
@@ -1812,7 +1814,7 @@ public class MT940 extends HttpServlet
 
 						break;
 
-					case Cell.CELL_TYPE_STRING:
+					case STRING:
 						if (!CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" ") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("0") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("            ") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" - ") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-  "))
 						{
 							CREDIT_DEBIT_MARK = "C";
@@ -1830,7 +1832,7 @@ public class MT940 extends HttpServlet
 
 			switch (CREDIT_BALANCE_CELL.getCellType())
 			{
-				case Cell.CELL_TYPE_NUMERIC:
+				case NUMERIC:
 					if (CREDIT_BALANCE_CELL.getNumericCellValue() != 0)
 					{
 						// MT940_CONTENT+=new
@@ -1839,7 +1841,7 @@ public class MT940 extends HttpServlet
 					}
 					break;
 
-				case Cell.CELL_TYPE_STRING:
+				case STRING:
 
 					if (!CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" ") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("0") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("            ") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" - ") && !CREDIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-  "))
 					{
@@ -1856,7 +1858,7 @@ public class MT940 extends HttpServlet
 		{
 			switch (DEBIT_BALANCE_CELL.getCellType())
 			{
-				case Cell.CELL_TYPE_NUMERIC:
+				case NUMERIC:
 					if (DEBIT_BALANCE_CELL.getNumericCellValue() != 0)
 					{
 						// MT940_CONTENT+=new
@@ -1865,7 +1867,7 @@ public class MT940 extends HttpServlet
 					}
 					break;
 
-				case Cell.CELL_TYPE_STRING:
+				case STRING:
 					if (!DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" ") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("0") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("            ") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase(" - ") && !DEBIT_BALANCE_CELL.getStringCellValue().equalsIgnoreCase("-  "))
 					{ // logger.info("@"+DEBIT_BALANCE_CELL.getStringCellValue().replace(" ","")+"@"+DEBIT_BALANCE_CELL.getStringCellValue().length());
 						MT940_CONTENT += String.valueOf(new BigDecimal(FIRST_ROW_TRANS_VALUE + Double.parseDouble(DEBIT_BALANCE_CELL.getStringCellValue().replaceAll(",", "").replaceAll(" ", "").replace(String.valueOf((char) 160), " "))).setScale(2, BigDecimal.ROUND_HALF_EVEN)).replace(".", ",") + System.getProperty("line.separator");
