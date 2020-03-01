@@ -2188,7 +2188,6 @@ public class MT940 extends HttpServlet
 			fe.printStackTrace();
 			logger.info("SAP server exception." + fe);
 			System.out.println("hii");
-			System.out.println("vikash");
 
 		}
 		
