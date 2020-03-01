@@ -786,7 +786,7 @@ public class MT940 extends HttpServlet
 						CHEQUE_NUMBER_CELL = sheet.getRow(i).getCell(CHEQUE_NUMBER, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 						DEBIT_BALANCE_CELL = sheet.getRow(i).getCell(DEBIT_BALANCE, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 						CREDIT_BALANCE_CELL = sheet.getRow(i).getCell(CREDIT_BALANCE, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-						// CR_DR_INDICATOR_CELL=sheet.getRow(i).getCell(CR_DR_INDICATOR,Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+						
 						DESCRIPTION_CELL = sheet.getRow(i).getCell(DESCRIPTION, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 						CLOSING_BALANCE_CELL = sheet.getRow(i).getCell(CLOSING_BALANCE_INDEX, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 						TRANS_REF_CELL = sheet.getRow(i).getCell(TRANS_REF_INDEX, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
